@@ -1,7 +1,6 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
 import axios from 'axios';
-import FormData from 'form-data'; // Required for multipart/form-data
 
 dotenv.config();
 const router = express.Router();
@@ -10,26 +9,17 @@ router.route('/').post(async (req, res) => {
   try {
     const { prompt } = req.body;
 
-    // 1. Create FormData for multipart request
-    const formData = new FormData();
-    formData.append('prompt', prompt);
-    formData.append('output_format', 'png'); // or 'jpeg'
-
-    // 2. Make the API request
     const response = await axios.post(
-      'https://api.stability.ai/v2beta/stable-image/generate/sd3',
-      formData,
+      'https://api-inference.huggingface.co/models/DeepFloyd/IF-I-XL-v1.0',
+      { inputs: prompt },
       {
         headers: {
-          ...formData.getHeaders(), // Sets 'Content-Type': 'multipart/form-data'
-          Authorization: `Bearer ${process.env.STABILITY_API_KEY}`,
-          Accept: 'image/*',
+          Authorization: `Bearer ${process.env.HF_API_KEY}`,
         },
-        responseType: 'arraybuffer', // To receive binary image data
+        responseType: 'arraybuffer',
       }
     );
 
-    // 3. Convert the binary response to base64
     const imageBase64 = Buffer.from(response.data, 'binary').toString('base64');
     res.status(200).json({ photo: imageBase64 });
 
