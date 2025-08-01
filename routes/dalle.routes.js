@@ -2,7 +2,8 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import axios from 'axios';
 
-dotenv.config();
+dotenv.config({ path: '../.env' });
+
 const router = express.Router();
 
 // Hugging Face recommended model: stable-diffusion-2
